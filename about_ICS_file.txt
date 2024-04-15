@@ -1,0 +1,35 @@
+The ICS file is a file that allows users to share calendar information on the web and over email, meaning that 
+when users send a meeting request to others, they can share ICS files with them, who can import the meeting's details into their calendars.
+
+When you export calendar data to an ICS file, typically you'll see options to select the time range of events to export 
+and the option to choose which calendars or events to include in the exported file if you have multiple calendars. 
+
+Once the export process is complete, you'll usually be prompted to download the generated ICS file, which you can then save to your computer or device
+and be imported into other calendar applications or shared with others who can import it into their own calendar systems, allowing them to view your events.
+
+CREATE A .ICS FILE:
+
+In order to create an .ics file, also called iCalendar file, we have to open a text editor.
+
+Next step is to declare the iCalendar version and providing a unique identifier for the calendar. For example:
+
+      BEGIN:VCALENDAR -> 'Encloses the entire calendar data.'
+      VERSION:2.0 -> 'Specifies the iCalendar version.'
+      PRODID: -> 'Identifies the product that created the iCalendar file.'
+
+Secondly, add the event data:
+
+      BEGIN:VEVENT -> 'Encloses individual event data.'
+      UID: -> 'Unique identifier for the event.'
+      DTSTAMP: -> 'Timestamp when the event was created'
+      DTSTART: -> 'Start date/time of the event.' 
+      DTEND: -> 'End date/time of the event.'
+      SUMMARY: -> 'Title of the event' 
+      LOCATION: -> 'Location of the event.'
+      DESCRIPTION: -> 'Description or additional information about the event'
+      END:VEVENT -> 'Close the iCalendar file'
+
+Finally, save the file with a .ics extension, which can now be shared or imported into various calendar applications. 
+Then, users can import the iCal file into their calendar applications to add the events to their calendars.
+
+  
