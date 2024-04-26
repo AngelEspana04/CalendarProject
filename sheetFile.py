@@ -3,7 +3,7 @@ import pymysql  # Importing pymysql library for database connectivity
 
 # Function to connect to the MySQL database
 def connect_to_db(host, user, password, database):
-    return pymysql.connect(host=host, user=user, password=password, database=database)
+    return pymysql.connect(host=Localhost, user=postgres, password=Imthebest29, database=calendar)
 
 # Function to insert an event into the database
 def insert_event(conn, event_name, start_time, end_time, location):
@@ -23,10 +23,10 @@ def prompt_user_for_event():
 
 # Main function
 def main():
-    host = "your_database_host"  # Database host
-    user = "your_database_user"  # Database username
-    password = "your_database_password"  # Database password
-    database = "calendar_events"  # Database name
+    host = "Localhost"  # Database host
+    user = "postgres"  # Database username
+    password = "Imthebest29"  # Database password
+    database = "calendar"  # Database name
 
     conn = connect_to_db(host, user, password, database)  # Connect to the database
 
