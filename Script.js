@@ -15,19 +15,23 @@ document.addEventListener("DOMContentLoaded", function () {
     currentDate = new Date(year, month, 1);
     monthYearElement.textContent = `${getMonthName(month)} ${year}`;
     daysElement.innerHTML = "";
-
+  
+    const today = new Date(); // Get the current date
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+  
     const firstDayOfMonth = new Date(year, month, 1);
     const lastDayOfMonth = new Date(year, month + 1, 0);
     const numDaysInMonth = lastDayOfMonth.getDate();
     const startingDay = firstDayOfMonth.getDay();
-
+  
     // Add empty placeholders for days before the first day of the month
     for (let i = 0; i < startingDay; i++) {
       const dayElement = document.createElement("div");
       dayElement.classList.add("prev-date");
       daysElement.appendChild(dayElement);
     }
-
+  
     // Add days of the month
     for (let i = 1; i <= numDaysInMonth; i++) {
       const dayElement = document.createElement("div");
@@ -37,12 +41,15 @@ document.addEventListener("DOMContentLoaded", function () {
         eventDateInput.value = formatDate(selectedDate);
         eventForm.style.display = "block";
       });
-      if (selectedDate && selectedDate.getDate() === i) {
+      
+      // Highlight the current date if it's in the current month and year
+      if (currentMonth === month && currentYear === year && today.getDate() === i) {
         dayElement.classList.add("today");
       }
+      
       daysElement.appendChild(dayElement);
     }
-
+  
     // Add empty placeholders for days after the last day of the month
     const numPlaceholders = 7 - (daysElement.children.length % 7);
     for (let i = 0; i < numPlaceholders; i++) {
@@ -51,6 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
       daysElement.appendChild(dayElement);
     }
   }
+  
 
   // Function to get the name of the month
   function getMonthName(month) {
