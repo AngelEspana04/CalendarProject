@@ -1,83 +1,99 @@
-const date = new Date();
+document.addEventListener("DOMContentLoaded", function () {
+  const monthYearElement = document.querySelector(".date h1");
+  const daysElement = document.querySelector(".days");
+  const eventForm = document.getElementById("eventForm");
+  const eventNameInput = eventForm.querySelector("input[name='eventName']");
+  const eventDateInput = eventForm.querySelector("input[name='eventDate']");
+  const eventDescriptionInput = eventForm.querySelector("textarea[name='eventDescription']");
+  const addEventBtn = document.getElementById("addEventBtn");
 
-const renderCalendar = () => {
-  date.setDate(1);
+  let currentDate = new Date();
+  let selectedDate = null;
 
-  const monthDays = document.querySelector(".days");
+  // Function to update the calendar with the specified month and year
+  function updateCalendar(month, year) {
+    currentDate = new Date(year, month, 1);
+    monthYearElement.textContent = `${getMonthName(month)} ${year}`;
+    daysElement.innerHTML = "";
 
-  const lastDay = new Date(
-    date.getFullYear(),
-    date.getMonth() + 1,
-    0
-  ).getDate();
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+    const numDaysInMonth = lastDayOfMonth.getDate();
+    const startingDay = firstDayOfMonth.getDay();
 
-  const prevLastDay = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    0
-  ).getDate();
+    // Add empty placeholders for days before the first day of the month
+    for (let i = 0; i < startingDay; i++) {
+      const dayElement = document.createElement("div");
+      dayElement.classList.add("prev-date");
+      daysElement.appendChild(dayElement);
+    }
 
-  const firstDayIndex = date.getDay();
+    // Add days of the month
+    for (let i = 1; i <= numDaysInMonth; i++) {
+      const dayElement = document.createElement("div");
+      dayElement.textContent = i;
+      dayElement.addEventListener("click", () => {
+        selectedDate = new Date(year, month, i);
+        eventDateInput.value = formatDate(selectedDate);
+        eventForm.style.display = "block";
+      });
+      if (selectedDate && selectedDate.getDate() === i) {
+        dayElement.classList.add("today");
+      }
+      daysElement.appendChild(dayElement);
+    }
 
-  const lastDayIndex = new Date(
-    date.getFullYear(),
-    date.getMonth() + 1,
-    0
-  ).getDay();
-
-  const nextDays = 7 - lastDayIndex - 1;
-
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  document.querySelector(".date h1").innerHTML = months[date.getMonth()];
-
-  document.querySelector(".date p").innerHTML = new Date().toDateString();
-
-  let days = "";
-
-  for (let x = firstDayIndex; x > 0; x--) {
-    days += `<div class="prev-date">${prevLastDay - x + 1}</div>`;
-  }
-
-  for (let i = 1; i <= lastDay; i++) {
-    if (
-      i === new Date().getDate() &&
-      date.getMonth() === new Date().getMonth()
-    ) {
-      days += `<div class="today">${i}</div>`;
-    } else {
-      days += `<div>${i}</div>`;
+    // Add empty placeholders for days after the last day of the month
+    const numPlaceholders = 7 - (daysElement.children.length % 7);
+    for (let i = 0; i < numPlaceholders; i++) {
+      const dayElement = document.createElement("div");
+      dayElement.classList.add("next-date");
+      daysElement.appendChild(dayElement);
     }
   }
 
-  for (let j = 1; j <= nextDays; j++) {
-    days += `<div class="next-date">${j}</div>`;
+  // Function to get the name of the month
+  function getMonthName(month) {
+    const months = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    return months[month];
   }
 
-  monthDays.innerHTML = days; // Moved this line outside the loop to prevent overwriting
+  // Function to format date as YYYY-MM-DD
+  function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
 
-  // Add event listener to the form for submitting event data
-  const eventForm = document.getElementById("eventForm");
-  eventForm.addEventListener("submit", function(event) {
-    event.preventDefault();
+  // Initial calendar render
+  updateCalendar(currentDate.getMonth(), currentDate.getFullYear());
 
-    const formData = new FormData(this);
+  // Event listener for next month
+  document.querySelector(".next").addEventListener("click", () => {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    updateCalendar(currentDate.getMonth(), currentDate.getFullYear());
+  });
 
-    // Debugging: Log form data to console
-    console.log("Form Data:", formData);
+  // Event listener for previous month
+  document.querySelector(".prev").addEventListener("click", () => {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    updateCalendar(currentDate.getMonth(), currentDate.getFullYear());
+  });
+
+  // Event listener for form submission (just for demonstration)
+  eventForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    console.log("Event Name:", eventNameInput.value);
+    console.log("Event Date:", eventDateInput.value);
+    console.log("Event Description:", eventDescriptionInput.value);
+    // You can add your logic to handle the form submission here
+    eventForm.style.display = "none"; // Hide the form after submission
+
+    const formData = new FormData(eventForm);
 
     // Generate ICS file
     generateICSFile(formData);
@@ -93,23 +109,16 @@ const renderCalendar = () => {
     .then(data => {
       console.log(data); // Log the response from the server
       // Optionally, update the calendar after adding the event
-      renderCalendar();
+      updateCalendar(currentDate.getMonth(), currentDate.getFullYear());
     })
     .catch(error => console.error("Error:", error));
   });
-};
 
-document.querySelector(".prev").addEventListener("click", () => {
-  date.setMonth(date.getMonth() - 1);
-  renderCalendar();
+  // Event listener for Add Event button
+  addEventBtn.addEventListener("click", () => {
+    eventForm.style.display = "block";
+  });
 });
-
-document.querySelector(".next").addEventListener("click", () => {
-  date.setMonth(date.getMonth() + 1);
-  renderCalendar();
-});
-
-renderCalendar();
 
 // Function to generate ICS file
 function generateICSFile(formData) {

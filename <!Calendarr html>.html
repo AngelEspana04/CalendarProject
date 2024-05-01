@@ -35,16 +35,17 @@
           <div>Sat</div>
         </div>
         <div class="days"></div>
+        <div class="button-container">
+          <button id="addEventBtn">Add Event</button>
+        </div>
       </div>
       <!--Form to add event-->
-      <form id="eventForm">
+      <form id="eventForm" style="display: none;">
         <input type="text" name="eventName" placeholder="Event Name" required>
         <input type="date" name="eventDate" required>
         <textarea name="eventDescription" placeholder="Event Description"></textarea>
         <input type="submit" value="Add Event">
       </form>
-    </div>
-  
     </div>
 
     <script src="script.js"></script>
